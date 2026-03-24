@@ -1,0 +1,76 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Http\Controllers;
+
+use App\Models\Product;
+use App\Models\User;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
+use Inertia\Inertia;
+use Inertia\Response;
+use LegionHQ\LaravelPayrex\Enums\PaymentMethod;
+use LegionHQ\LaravelPayrex\Exceptions\PayrexApiException;
+use LegionHQ\LaravelPayrex\Facades\Payrex;
+
+class ElementsController
+{
+    public function index(Request $request): Response
+    {
+        return Inertia::render('Elements/Index', [
+            'products' => Product::query()->where('category', 'product')->inRandomOrder()->get(),
+            'customers' => User::query()->where('id', '!=', $request->user()->id)->get(['id', 'name', 'email', 'phone', 'address_line1', 'address_line2', 'city', 'state', 'postal_code', 'country', 'payrex_customer_id']),
+            'publicKey' => config('payrex.public_key'),
+        ]);
+    }
+
+    public function createIntent(Request $request): JsonResponse
+    {
+        $validated = $request->validate([
+            'amount' => ['required', 'numeric', 'min:1'],
+            'description' => ['required', 'string', 'max:255'],
+            'payment_methods' => ['required', 'array', 'min:1'],
+            'payment_methods.*' => ['string', Rule::in(array_column(PaymentMethod::cases(), 'value'))],
+            'user_id' => ['nullable', 'exists:users,id'],
+            'capture_type' => ['nullable', 'string', Rule::in(['automatic', 'manual'])],
+            'statement_descriptor' => ['nullable', 'string', 'max:22'],
+        ]);
+
+        try {
+            $params = [
+                'amount' => (int) round($validated['amount'] * 100),
+                'description' => $validated['description'],
+                'payment_methods' => $validated['payment_methods'],
+            ];
+
+            if ($request->filled('capture_type') && $validated['capture_type'] === 'manual') {
+                $params['payment_method_options'] = [
+                    'card' => ['capture_type' => 'manual'],
+                ];
+            }
+
+            if ($request->filled('statement_descriptor')) {
+                $params['statement_descriptor'] = $validated['statement_descriptor'];
+            }
+
+            if ($request->filled('user_id')) {
+                $user = User::findOrFail($validated['user_id']);
+                if (! $user->hasPayrexCustomerId()) {
+                    $user->createAsPayrexCustomer();
+                }
+                $params['customer_id'] = $user->payrexCustomerId();
+            }
+
+            $paymentIntent = Payrex::paymentIntents()->create($params);
+
+            return response()->json([
+                'client_secret' => $paymentIntent->clientSecret,
+                'return_url' => route('elements.success'),
+            ]);
+        } catch (PayrexApiException $exception) {
+            return response()->json(['error' => $exception->getMessage()], 422);
+        }
+    }
+}
