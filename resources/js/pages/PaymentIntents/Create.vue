@@ -132,7 +132,7 @@ const liveCode = computed(() => {
                                 How much to charge.
                             </p>
                         </div>
-                        <div class="space-y-3">
+                        <div class="min-w-0 space-y-3">
                             <div class="flex flex-wrap gap-2">
                                 <Button
                                     v-for="product in products"
@@ -186,7 +186,7 @@ const liveCode = computed(() => {
                                 Accepted payment methods.
                             </p>
                         </div>
-                        <div>
+                        <div class="min-w-0">
                             <ToggleGrid
                                 :options="paymentMethodOptions"
                                 :selected="form.payment_methods"
@@ -205,7 +205,7 @@ const liveCode = computed(() => {
                                 Customer, capture, and statement descriptor.
                             </p>
                         </div>
-                        <div class="space-y-3">
+                        <div class="min-w-0 space-y-3">
                             <div class="space-y-2">
                                 <Label for="user_id">Customer (optional)</Label>
                                 <Select id="user_id" v-model="form.user_id">

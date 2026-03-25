@@ -80,11 +80,20 @@ const resourceLabels = {
                                     <div
                                         v-for="event in events"
                                         :key="event.value"
-                                        class="flex items-center justify-between gap-2 rounded-md px-2 py-1.5"
+                                        class="rounded-md px-2 py-1.5"
                                     >
-                                        <EventBadge :event="event.value" />
+                                        <div
+                                            class="flex items-center justify-between gap-2"
+                                        >
+                                            <EventBadge :event="event.value" />
+                                            <code
+                                                class="hidden truncate text-xs text-muted-foreground xl:block"
+                                            >
+                                                {{ event.event_class }}
+                                            </code>
+                                        </div>
                                         <code
-                                            class="hidden truncate text-xs text-muted-foreground sm:block"
+                                            class="mt-0.5 inline-block max-w-full truncate text-xs text-muted-foreground xl:hidden"
                                         >
                                             {{ event.event_class }}
                                         </code>
@@ -96,6 +105,22 @@ const resourceLabels = {
                 </div>
 
                 <div class="space-y-4">
+                    <CodeBlock
+                        title="Webhook Setup"
+                        lang="bash"
+                        code="
+# .env — enable the built-in webhook route
+PAYREX_WEBHOOK_ENABLED=true
+PAYREX_WEBHOOK_SECRET=your_webhook_secret
+
+# The package auto-registers a POST route at:
+# POST /payrex/webhook
+#
+# It verifies the signature, then dispatches
+# events for your listeners.
+                    "
+                    />
+
                     <CodeBlock
                         title="Listening to Events"
                         code="
@@ -131,51 +156,32 @@ Event::listen(
                     />
 
                     <CodeBlock
-                        title="Webhook Setup"
-                        code="
-# .env
-PAYREX_WEBHOOK_ENABLED=true
-PAYREX_WEBHOOK_SECRET=your_webhook_secret
-
-// The package auto-registers:
-// POST /payrex/webhook
-
-# Or manual verification:
-$event = Payrex::constructEvent(
-    $payload,
-    $signatureHeader,
-    $secret,
-);
-                    "
-                    />
-
-                    <CodeBlock
                         title="Idempotent Handling"
                         code="
 // Webhooks may be delivered more than once.
-// Use the event ID to deduplicate:
+// Use a transaction + unique constraint to deduplicate:
+use Illuminate\Database\UniqueConstraintViolationException;
+
 Event::listen(
     PaymentIntentSucceeded::class,
     function (PaymentIntentSucceeded $event) {
         $eventId = $event->payload['id'];
 
-        // Skip if already processed
-        if (DB::table('processed_webhook_events')
-            ->where('event_id', $eventId)->exists()) {
-            return;
+        try {
+            DB::transaction(function () use ($event, $eventId) {
+                DB::table('processed_webhook_events')->insert([
+                    'event_id' => $eventId,
+                    'processed_at' => now(),
+                ]);
+
+                /** @var PaymentIntent $paymentIntent */
+                $paymentIntent = $event->data();
+                Order::where('payment_intent_id', $paymentIntent->id)
+                    ->update(['status' => 'paid']);
+            });
+        } catch (UniqueConstraintViolationException) {
+            // Already processed — skip
         }
-
-        // Process the event
-        /** @var PaymentIntent $paymentIntent */
-        $paymentIntent = $event->data();
-        Order::where('payment_intent_id', $paymentIntent->id)
-            ->update(['status' => 'paid']);
-
-        // Record that we processed it
-        DB::table('processed_webhook_events')->insert([
-            'event_id' => $eventId,
-            'processed_at' => now(),
-        ]);
     }
 );
                     "

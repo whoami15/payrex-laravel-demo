@@ -87,7 +87,7 @@ const liveCode = computed(() => {
                                 The payment to refund.
                             </p>
                         </div>
-                        <div class="rounded-xl border bg-card">
+                        <div class="min-w-0 rounded-xl border bg-card">
                             <div class="flex items-start gap-4 p-4">
                                 <div
                                     class="flex size-10 shrink-0 items-center justify-center rounded-lg bg-muted"
@@ -158,7 +158,7 @@ const liveCode = computed(() => {
                                     {{ formatAmount(maxRefundableCentavos) }}.
                                 </p>
                             </div>
-                            <div class="space-y-3">
+                            <div class="min-w-0 space-y-3">
                                 <div class="space-y-2">
                                     <Label for="amount">Amount (₱)</Label>
                                     <Input

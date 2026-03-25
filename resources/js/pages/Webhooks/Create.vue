@@ -96,7 +96,7 @@ const liveCode = computed(() => {
                                 The URL that will receive webhook events.
                             </p>
                         </div>
-                        <div class="space-y-3">
+                        <div class="min-w-0 space-y-3">
                             <div class="space-y-2">
                                 <Label for="url">URL</Label>
                                 <Input
@@ -127,7 +127,7 @@ const liveCode = computed(() => {
                                 Choose which events to listen to.
                             </p>
                         </div>
-                        <div class="space-y-3">
+                        <div class="min-w-0 space-y-3">
                             <div class="flex items-center justify-between">
                                 <span class="text-sm text-muted-foreground">
                                     {{ form.events.length }} of

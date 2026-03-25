@@ -95,7 +95,7 @@ const liveCode = computed(() => {
                                 Name, email, and phone.
                             </p>
                         </div>
-                        <div class="space-y-3">
+                        <div class="min-w-0 space-y-3">
                             <div class="space-y-2">
                                 <Label for="name">Name</Label>
                                 <Input
@@ -136,7 +136,7 @@ const liveCode = computed(() => {
                                 Optional. Used for billing statements.
                             </p>
                         </div>
-                        <div class="space-y-3">
+                        <div class="min-w-0 space-y-3">
                             <div class="space-y-2">
                                 <Label for="line1">Address Line 1</Label>
                                 <Input

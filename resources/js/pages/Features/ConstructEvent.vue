@@ -102,9 +102,8 @@ function generateSignature() {
                 docs="guide/webhooks"
                 controller="app/Http/Controllers/Feature/ConstructEventController.php"
             >
-                Manually verify webhook signatures and parse events without
-                using the built-in webhook route. Useful when you need full
-                control over webhook handling.
+                Parse webhook events without relying on the built-in route.
+                Useful when you need full control over webhook handling.
             </FeatureHeader>
 
             <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
@@ -243,13 +242,21 @@ function generateSignature() {
 
                 <div class="space-y-4">
                     <CodeBlock
-                        title="Basic Usage"
+                        title="Custom Webhook Route"
+                        code="
+// routes/web.php — register your own route
+// (set PAYREX_WEBHOOK_ENABLED=false to disable the built-in route)
+Route::post('my/webhook', WebhookController::class);
+                    "
+                    />
+
+                    <CodeBlock
+                        title="Custom Webhook Controller"
                         code="
 use LegionHQ\LaravelPayrex\Facades\Payrex;
 use LegionHQ\LaravelPayrex\Exceptions\WebhookVerificationException;
 
-// In your own webhook controller
-public function handleWebhook(Request $request): Response
+public function __invoke(Request $request): Response
 {
     $payload = $request->getContent();
     $signature = $request->header('Payrex-Signature');

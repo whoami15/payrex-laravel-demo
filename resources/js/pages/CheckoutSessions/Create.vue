@@ -174,7 +174,7 @@ const liveCode = computed(() => {
                                 Optional settings for the session.
                             </p>
                         </div>
-                        <div class="space-y-3">
+                        <div class="min-w-0 space-y-3">
                             <div class="space-y-2">
                                 <Label for="description">Description</Label>
                                 <Input
@@ -240,7 +240,7 @@ const liveCode = computed(() => {
                                 Methods available at checkout.
                             </p>
                         </div>
-                        <div>
+                        <div class="min-w-0">
                             <ToggleGrid
                                 :options="paymentMethodOptions"
                                 :selected="form.payment_methods"

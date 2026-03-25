@@ -103,7 +103,7 @@ function copy() {
 
 <template>
     <div
-        class="group contain-[inline-size] overflow-hidden rounded-xl border border-[#292D3E] bg-[#292D3E]"
+        class="group overflow-hidden rounded-xl border border-[#292D3E] bg-[#292D3E] contain-[inline-size]"
     >
         <p
             v-if="title"

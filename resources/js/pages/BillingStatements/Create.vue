@@ -127,7 +127,7 @@ const liveCode = computed(() => {
                                 Who to bill.
                             </p>
                         </div>
-                        <div class="space-y-3">
+                        <div class="min-w-0 space-y-3">
                             <div class="space-y-2">
                                 <Label for="user_id">Customer</Label>
                                 <Select id="user_id" v-model="form.user_id">
@@ -173,7 +173,7 @@ const liveCode = computed(() => {
                                 Services to include on the statement.
                             </p>
                         </div>
-                        <div class="space-y-3">
+                        <div class="min-w-0 space-y-3">
                             <div class="flex flex-wrap gap-2">
                                 <Button
                                     v-for="product in products"

@@ -27,7 +27,7 @@ const paymentFlows = [
             'One-time payment links with line items, due dates, and customer details.',
         href: '/billing-statements/create',
         icon: markRaw(FileText),
-        badge: 'Invoice',
+        badge: null,
     },
     {
         title: 'PayRex Elements',
@@ -87,7 +87,7 @@ const features = [
     {
         title: 'constructEvent()',
         href: '/features/construct-event',
-        description: 'Manual webhook verification',
+        description: 'Custom webhook handling',
     },
     {
         title: 'Error Handling',
