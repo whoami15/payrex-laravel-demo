@@ -269,9 +269,7 @@ public function __invoke(Request $request): Response
         );
 
         $type = $event->eventType(); // WebhookEventType enum
-
-        /** @var PaymentIntent $data */
-        $data = $event->data();
+        $data = $event->data();      // Typed DTO (PaymentIntent, Refund, etc.)
 
         return response('OK', 200);
     } catch (WebhookVerificationException $e) {
@@ -295,7 +293,6 @@ try {
     );
 
     // Process for this specific tenant
-    /** @var PaymentIntent $paymentIntent */
     $paymentIntent = $event->data();
 } catch (WebhookVerificationException $e) {
     Log::warning('Invalid webhook for tenant', [
