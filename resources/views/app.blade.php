@@ -32,8 +32,6 @@
         <link rel="preload" href="{{ Vite::asset('resources/fonts/Geist-Variable.woff2') }}" as="font" type="font/woff2" crossorigin>
         <link rel="preload" href="{{ Vite::asset('resources/fonts/GeistMono-Variable.woff2') }}" as="font" type="font/woff2" crossorigin>
 
-        <title data-inertia>{{ config('app.name', 'Laravel') }}</title>
-
         <link rel="icon" href="/favicon.ico" sizes="any">
         <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 
@@ -44,9 +42,11 @@
         <script src="https://js.payrexhq.com"></script>
 
         @vite(['resources/js/app.js', "resources/js/pages/{$page['component']}.vue"])
-        @inertiaHead
+        <x-inertia::head>
+            <title>{{ config('app.name', 'Laravel') }}</title>
+        </x-inertia::head>
     </head>
     <body class="font-sans antialiased">
-        @inertia
+        <x-inertia::app />
     </body>
 </html>
