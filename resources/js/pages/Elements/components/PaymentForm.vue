@@ -33,13 +33,10 @@ async function confirmPayment() {
 
         if (result?.error) {
             errorMessage.value = result.error.message;
-            paying.value = false;
-        }
-        if (!result) {
-            paying.value = false;
         }
     } catch (e) {
         errorMessage.value = e.message || 'Payment failed.';
+    } finally {
         paying.value = false;
     }
 }
@@ -86,12 +83,14 @@ async function confirmPayment() {
                 Pay {{ formattedAmount }}
             </Button>
 
-            <p
-                class="mt-3 flex items-center justify-center gap-1 text-xs text-muted-foreground"
-            >
-                <Lock class="size-3" />
-                Secured by PayRex
-            </p>
+            <div class="mt-3 flex justify-center">
+                <span
+                    class="inline-flex items-center gap-1 rounded-full border border-green-300 px-3 py-1 text-xs text-green-600 dark:border-green-800 dark:text-green-400"
+                >
+                    <Lock class="size-3" />
+                    Secured by PayRex
+                </span>
+            </div>
         </div>
     </div>
 </template>
