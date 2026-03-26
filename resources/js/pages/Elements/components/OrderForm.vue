@@ -333,7 +333,6 @@ const canSubmit = computed(() => {
                 @click="createPaymentIntent"
             >
                 <Spinner v-if="http.processing" />
-                <CreditCard v-else class="size-4" />
                 Proceed to Payment
             </Button>
         </div>

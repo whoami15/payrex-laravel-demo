@@ -4,12 +4,10 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreRefundRequest;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 use Inertia\Response;
-use LegionHQ\LaravelPayrex\Enums\RefundReason;
 use LegionHQ\LaravelPayrex\Exceptions\PayrexApiException;
 use LegionHQ\LaravelPayrex\Facades\Payrex;
 
@@ -30,14 +28,9 @@ class RefundController
         }
     }
 
-    public function store(Request $request): RedirectResponse
+    public function store(StoreRefundRequest $request): RedirectResponse
     {
-        $validated = $request->validate([
-            'payment_id' => ['required', 'string'],
-            'amount' => ['required', 'numeric', 'min:1'],
-            'reason' => ['required', 'string', Rule::in(array_column(RefundReason::cases(), 'value'))],
-            'remarks' => ['nullable', 'string', 'max:255'],
-        ]);
+        $validated = $request->validated();
 
         try {
             $params = [

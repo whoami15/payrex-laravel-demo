@@ -209,8 +209,11 @@ const liveCode = computed(() => {
                         </div>
 
                         <div class="grid gap-4 p-5 sm:grid-cols-[200px_1fr]">
-                            <div />
-                            <Button type="submit" :disabled="processing">
+                            <Button
+                                type="submit"
+                                :disabled="processing"
+                                class="sm:col-start-2"
+                            >
                                 <Spinner v-if="processing" />
                                 Issue Refund
                             </Button>

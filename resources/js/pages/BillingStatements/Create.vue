@@ -37,7 +37,7 @@ const form = useForm({
 
 function addProduct(product) {
     const existing = form.line_items.find(
-        (item) => item.description === product.name,
+        (item) => item.product_id === product.id,
     );
     if (existing) {
         existing.quantity++;
@@ -45,6 +45,7 @@ function addProduct(product) {
     }
 
     form.line_items.push({
+        product_id: product.id,
         description: product.name,
         unit_price: (product.price / 100).toFixed(2),
         quantity: 1,
@@ -291,8 +292,11 @@ const liveCode = computed(() => {
                     </div>
 
                     <div class="grid gap-4 p-5 sm:grid-cols-[200px_1fr]">
-                        <div />
-                        <Button type="submit" :disabled="form.processing">
+                        <Button
+                            type="submit"
+                            :disabled="form.processing"
+                            class="sm:col-start-2"
+                        >
                             <Spinner v-if="form.processing" />
                             Create Billing Statement
                         </Button>

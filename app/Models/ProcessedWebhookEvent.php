@@ -10,6 +10,9 @@ class ProcessedWebhookEvent extends Model
 {
     public $timestamps = false;
 
+    /**
+     * @var list<string>
+     */
     protected $fillable = [
         'event_id',
         'event_type',
@@ -18,6 +21,9 @@ class ProcessedWebhookEvent extends Model
         'processed_at',
     ];
 
+    /**
+     * @return array<string, string>
+     */
     protected function casts(): array
     {
         return [

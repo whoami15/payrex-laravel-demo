@@ -195,10 +195,10 @@ const liveCode = computed(() => {
                     </div>
 
                     <div class="grid gap-4 p-5 sm:grid-cols-[200px_1fr]">
-                        <div />
                         <Button
                             type="submit"
                             :disabled="form.processing || !form.isDirty"
+                            class="sm:col-start-2"
                         >
                             <Spinner v-if="form.processing" />
                             Save Changes

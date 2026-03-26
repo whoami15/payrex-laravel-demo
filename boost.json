@@ -3,7 +3,6 @@
         "claude_code"
     ],
     "guidelines": true,
-    "herd_mcp": false,
     "mcp": true,
     "nightwatch_mcp": false,
     "packages": [
@@ -11,7 +10,7 @@
     ],
     "sail": false,
     "skills": [
-        "wayfinder-development",
+        "laravel-best-practices",
         "pest-testing",
         "inertia-vue-development",
         "tailwindcss-development",

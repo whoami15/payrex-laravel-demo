@@ -8,6 +8,16 @@ use Illuminate\Database\Eloquent\Model;
 
 class Product extends Model
 {
+    /**
+     * @var array<string, mixed>
+     */
+    protected $attributes = [
+        'category' => 'product',
+    ];
+
+    /**
+     * @var list<string>
+     */
     protected $fillable = [
         'name',
         'description',

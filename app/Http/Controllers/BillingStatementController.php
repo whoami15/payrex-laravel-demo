@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreBillingStatementLineItemRequest;
+use App\Http\Requests\StoreBillingStatementRequest;
+use App\Http\Requests\UpdateBillingStatementRequest;
 use App\Models\Product;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
@@ -42,18 +45,11 @@ class BillingStatementController
         ]);
     }
 
-    public function store(Request $request): RedirectResponse
+    public function store(StoreBillingStatementRequest $request): RedirectResponse
     {
-        $validated = $request->validate([
-            'user_id' => ['required', 'exists:users,id'],
-            'description' => ['nullable', 'string', 'max:255'],
-            'line_items' => ['required', 'array', 'min:1'],
-            'line_items.*.description' => ['required', 'string'],
-            'line_items.*.unit_price' => ['required', 'numeric', 'min:0.01'],
-            'line_items.*.quantity' => ['required', 'integer', 'min:1'],
-        ]);
+        $validated = $request->validated();
 
-        $user = User::findOrFail($validated['user_id']);
+        $user = User::query()->findOrFail($validated['user_id']);
         if (! $user->hasPayrexCustomerId()) {
             $user->createAsPayrexCustomer();
         }
@@ -124,12 +120,9 @@ class BillingStatementController
         }
     }
 
-    public function update(Request $request, string $id): RedirectResponse
+    public function update(UpdateBillingStatementRequest $request, string $id): RedirectResponse
     {
-        $validated = $request->validate([
-            'due_at' => ['nullable', 'date'],
-            'description' => ['nullable', 'string', 'max:255'],
-        ]);
+        $validated = $request->validated();
 
         try {
             $billingStatement = Payrex::billingStatements()->retrieve($id);
@@ -158,13 +151,9 @@ class BillingStatementController
         }
     }
 
-    public function addLineItem(Request $request, string $id): RedirectResponse
+    public function addLineItem(StoreBillingStatementLineItemRequest $request, string $id): RedirectResponse
     {
-        $validated = $request->validate([
-            'description' => ['required', 'string'],
-            'unit_price' => ['required', 'numeric', 'min:0.01'],
-            'quantity' => ['required', 'integer', 'min:1'],
-        ]);
+        $validated = $request->validated();
 
         try {
             Payrex::billingStatementLineItems()->create([
@@ -184,13 +173,9 @@ class BillingStatementController
         }
     }
 
-    public function updateLineItem(Request $request, string $_billingStatementId, string $lineItemId): RedirectResponse
+    public function updateLineItem(StoreBillingStatementLineItemRequest $request, string $_billingStatementId, string $lineItemId): RedirectResponse
     {
-        $validated = $request->validate([
-            'description' => ['required', 'string'],
-            'unit_price' => ['required', 'numeric', 'min:0.01'],
-            'quantity' => ['required', 'integer', 'min:1'],
-        ]);
+        $validated = $request->validated();
 
         try {
             Payrex::billingStatementLineItems()->update($lineItemId, [

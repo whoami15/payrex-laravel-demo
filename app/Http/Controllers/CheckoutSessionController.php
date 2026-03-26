@@ -4,14 +4,13 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreCheckoutSessionRequest;
 use App\Models\Product;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 use Inertia\Response;
-use LegionHQ\LaravelPayrex\Enums\PaymentMethod;
 use LegionHQ\LaravelPayrex\Exceptions\PayrexApiException;
 use LegionHQ\LaravelPayrex\Facades\Payrex;
 
@@ -30,21 +29,9 @@ class CheckoutSessionController
         ]);
     }
 
-    public function store(Request $request): RedirectResponse
+    public function store(StoreCheckoutSessionRequest $request): RedirectResponse
     {
-        $validated = $request->validate([
-            'line_items' => ['required', 'array', 'min:1'],
-            'line_items.*.name' => ['required', 'string'],
-            'line_items.*.amount' => ['required', 'numeric', 'min:1'],
-            'line_items.*.quantity' => ['required', 'integer', 'min:1'],
-            'line_items.*.description' => ['nullable', 'string'],
-            'line_items.*.image' => ['nullable', 'url'],
-            'description' => ['nullable', 'string', 'max:255'],
-            'payment_methods' => ['required', 'array', 'min:1'],
-            'payment_methods.*' => ['string', Rule::in(array_column(PaymentMethod::cases(), 'value'))],
-            'submit_type' => ['nullable', 'string', Rule::in(['pay', 'donate'])],
-            'user_id' => ['nullable', 'exists:users,id'],
-        ]);
+        $validated = $request->validated();
 
         try {
             $params = [

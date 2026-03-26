@@ -13,7 +13,7 @@ return new class extends Migration
             $table->string('name');
             $table->text('description')->nullable();
             $table->integer('price');
-            $table->string('category')->default('product');
+            $table->string('category')->index()->default('product');
             $table->string('image')->nullable();
             $table->timestamps();
         });

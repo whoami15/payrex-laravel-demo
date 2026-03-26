@@ -4,14 +4,13 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CreateElementsPaymentIntentRequest;
 use App\Models\Product;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 use Inertia\Response;
-use LegionHQ\LaravelPayrex\Enums\PaymentMethod;
 use LegionHQ\LaravelPayrex\Exceptions\PayrexApiException;
 use LegionHQ\LaravelPayrex\Facades\Payrex;
 
@@ -26,17 +25,9 @@ class ElementsController
         ]);
     }
 
-    public function createIntent(Request $request): JsonResponse
+    public function createIntent(CreateElementsPaymentIntentRequest $request): JsonResponse
     {
-        $validated = $request->validate([
-            'amount' => ['required', 'numeric', 'min:1'],
-            'description' => ['required', 'string', 'max:255'],
-            'payment_methods' => ['required', 'array', 'min:1'],
-            'payment_methods.*' => ['string', Rule::in(array_column(PaymentMethod::cases(), 'value'))],
-            'user_id' => ['nullable', 'exists:users,id'],
-            'capture_type' => ['nullable', 'string', Rule::in(['automatic', 'manual'])],
-            'statement_descriptor' => ['nullable', 'string', 'max:22'],
-        ]);
+        $validated = $request->validated();
 
         try {
             $params = [
@@ -56,7 +47,7 @@ class ElementsController
             }
 
             if ($request->filled('user_id')) {
-                $user = User::findOrFail($validated['user_id']);
+                $user = User::query()->findOrFail($validated['user_id']);
                 if (! $user->hasPayrexCustomerId()) {
                     $user->createAsPayrexCustomer();
                 }

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreCustomerRequest;
+use App\Http\Requests\UpdateCustomerRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -41,19 +43,9 @@ class CustomerController
         return Inertia::render('Customers/Create');
     }
 
-    public function store(Request $request): RedirectResponse
+    public function store(StoreCustomerRequest $request): RedirectResponse
     {
-        $validated = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'email', 'max:255'],
-            'phone' => ['nullable', 'string', 'max:50'],
-            'line1' => ['nullable', 'string', 'max:255'],
-            'line2' => ['nullable', 'string', 'max:255'],
-            'city' => ['nullable', 'string', 'max:255'],
-            'state' => ['nullable', 'string', 'max:255'],
-            'postal_code' => ['nullable', 'string', 'max:20'],
-            'country' => ['nullable', 'string', 'max:2'],
-        ]);
+        $validated = $request->validated();
 
         try {
             $params = [
@@ -121,19 +113,9 @@ class CustomerController
         }
     }
 
-    public function update(Request $request, string $id): RedirectResponse
+    public function update(UpdateCustomerRequest $request, string $id): RedirectResponse
     {
-        $validated = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'email', 'max:255'],
-            'phone' => ['nullable', 'string', 'max:50'],
-            'line1' => ['nullable', 'string', 'max:255'],
-            'line2' => ['nullable', 'string', 'max:255'],
-            'city' => ['nullable', 'string', 'max:255'],
-            'state' => ['nullable', 'string', 'max:255'],
-            'postal_code' => ['nullable', 'string', 'max:20'],
-            'country' => ['nullable', 'string', 'max:2'],
-        ]);
+        $validated = $request->validated();
 
         try {
             $params = [

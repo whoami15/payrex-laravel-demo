@@ -4,13 +4,12 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreWebhookEndpointRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 use Inertia\Response;
 use LegionHQ\LaravelPayrex\Enums\WebhookEndpointStatus;
-use LegionHQ\LaravelPayrex\Enums\WebhookEventType;
 use LegionHQ\LaravelPayrex\Exceptions\PayrexApiException;
 use LegionHQ\LaravelPayrex\Facades\Payrex;
 
@@ -42,14 +41,9 @@ class WebhookManagementController
         return Inertia::render('Webhooks/Create');
     }
 
-    public function store(Request $request): RedirectResponse
+    public function store(StoreWebhookEndpointRequest $request): RedirectResponse
     {
-        $validated = $request->validate([
-            'url' => ['required', 'url', 'max:255'],
-            'events' => ['required', 'array', 'min:1'],
-            'events.*' => ['string', Rule::in(array_column(WebhookEventType::cases(), 'value'))],
-            'description' => ['nullable', 'string', 'max:255'],
-        ]);
+        $validated = $request->validated();
 
         try {
             $webhook = Payrex::webhooks()->create([
