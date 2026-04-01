@@ -9,6 +9,7 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Validator;
 use LegionHQ\LaravelPayrex\Enums\PaymentMethod;
+use LegionHQ\LaravelPayrex\Enums\SubmitType;
 
 class StoreCheckoutSessionRequest extends FormRequest
 {
@@ -32,8 +33,8 @@ class StoreCheckoutSessionRequest extends FormRequest
             'line_items.*.image' => ['nullable', 'url'],
             'description' => ['nullable', 'string', 'max:255'],
             'payment_methods' => ['required', 'array', 'min:1'],
-            'payment_methods.*' => ['string', Rule::in(array_column(PaymentMethod::cases(), 'value'))],
-            'submit_type' => ['nullable', 'string', Rule::in(['pay', 'donate'])],
+            'payment_methods.*' => ['string', Rule::in(PaymentMethod::cases())],
+            'submit_type' => ['nullable', 'string', Rule::in(SubmitType::cases())],
             'user_id' => ['nullable', 'exists:users,id'],
         ];
     }

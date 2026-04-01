@@ -11,6 +11,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
+use LegionHQ\LaravelPayrex\Enums\CaptureType;
 use LegionHQ\LaravelPayrex\Exceptions\PayrexApiException;
 use LegionHQ\LaravelPayrex\Facades\Payrex;
 
@@ -36,9 +37,9 @@ class ElementsController
                 'payment_methods' => $validated['payment_methods'],
             ];
 
-            if ($request->filled('capture_type') && $validated['capture_type'] === 'manual') {
+            if ($request->filled('capture_type') && $validated['capture_type'] === CaptureType::Manual->value) {
                 $params['payment_method_options'] = [
-                    'card' => ['capture_type' => 'manual'],
+                    'card' => ['capture_type' => CaptureType::Manual->value],
                 ];
             }
 

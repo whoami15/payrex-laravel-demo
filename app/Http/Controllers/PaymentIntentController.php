@@ -12,6 +12,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
+use LegionHQ\LaravelPayrex\Enums\CaptureType;
 use LegionHQ\LaravelPayrex\Exceptions\PayrexApiException;
 use LegionHQ\LaravelPayrex\Facades\Payrex;
 
@@ -60,9 +61,9 @@ class PaymentIntentController
             }
 
             // Manual capture requires payment_method_options
-            if (($validated['capture_type'] ?? 'automatic') === 'manual') {
+            if (($validated['capture_type'] ?? CaptureType::Automatic->value) === CaptureType::Manual->value) {
                 $params['payment_method_options'] = [
-                    'card' => ['capture_type' => 'manual'],
+                    'card' => ['capture_type' => CaptureType::Manual->value],
                 ];
             }
 
